@@ -2,77 +2,130 @@
 
 {% block body %}
 
+<div class="address">Top up: <span class="text-danger">{{ bitcoinaddress }}</span></div>
+
 <div class="container">
-    <!-- Main hero unit for a primary marketing message or call to action -->
-    <div class="hero-unit">
-        <h1>Bitcoin Wifi</h1>
-        <p>You are seconds away from accessing wifi. All you need to do is send an appropriate amount of bitcoins for the duration you want access. Note that access is for the device currently viewing this webpage, but payment can be from any device.&nbsp;</p>
-        <p></p>
+  <div class="row">
+    <div class="col-sm-7 col-md-8 col-lg-9">
+      <h2>How to access Bitcoin Wifi?</h2>
+      <p class="lead">
+        Just send <b>0.001</b> BTC to the <span class="text-danger">address&nbsp;above</span>
+      </p>
+      <p>
+        By sending a payment to this address, you agree with the <a href="/terms">terms&nbsp;and&nbsp;conditions</a> of this hotspot.
+      </p>
+      <p>
+        <a href="/checkaccess" class="btn btn-primary btn-lg btn-block">Check payment & start surfing!</a>
+      </p>
 
-        <td>The address for payment is : {{ bitcoinaddress }}</td>
-
-        <table>
-            <thead><td>Price</td><td>Duration</td></thead>
-            <tbody>
-
-            {% for p in paymentoptions %}
-            <tr>
-                <td>{{ p[1] }} btc </td> <td>{{ p[2] }} </td>
-                <td>
-                    <a href="bitcoin:{{ bitcoinaddress }}?amount={{ p[1] }}&label=BitcoinWifiHotspot">Wallet Payment</a>
-                <td>or display <a href="#" rel="qr_{{ p[0] }}"> QR code</a>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-
-        <p>By sending payment to any of these address, you agree with the <a href="/terms">terms and conditions </a>of this access point.</p>Once you have made payment, click the big blue box here.
-        <a href="/checkaccess" class="btn btn-primary btn-large">Check payment &raquo;</a>
+      <p>
+        <b>Bitcoin not installed?</b> Consider these alternative ways:
+      </p>
+      <div class="row">
+        <p class="col-sm-6 col-lg-3">
+          <a href="/a" class="btn btn-success btn-block">Bitcoinwifi voucher</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/b" class="btn btn-success btn-block">Blockchain wallet</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/c" class="btn btn-success btn-block">Coinbase account</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/d" class="btn btn-success btn-block">Bitpay account</a>
+        </p>
+      </div>
     </div>
-    <!-- Example row of columns -->
-    <div class="row">
-        <div class="span4">
-            <h2>LocalBitcoins</h2>
-            <p>Need to get some bitcoins? Here's a list of local vendors complete with contact details</p>
-            <p><a class="btn" href="http://localbitcoins.com">localbitcoins.com</a></p>
-        </div>
-        <div class="span4">
-            <h2>Blockchain.info</h2>
-            <p>Find out the latest statistics about the bitcoin blockchain here.</p>
-            <p><a class="btn" href="http://blockchain.info">blockchain.info</a></p>
-        </div>
-        <div class="span4">
-            <h2>bitcoin.org</h2>
-            <p>What on earth is bitcoin anyhoo ?</p>
-            <p><a class="btn" href="http://bitcoin.org/">bitcoin.org</a></p>
-        </div>
+    <div class="col-sm-5 col-md-4 col-lg-3 text-center">
+      <div class="qrcode">
+        <img src="/qrcode/{{paymentoptions[0][0]}}" />
+      </div>
+      <p><b>0.001</b> BTC for <b>one hour</b></p>
     </div>
-    <p>Technical stuff : Port 8333 is open regardless, so that any bitcoin payments can be sent via this hotspot. The above sites are sponsors of this hotspot and so access to those sites is open.</p>
-    <hr>
-    <footer>
-        <p>&copy; bitcoinwifi.net 2013 .  See  <a href="https://github.com/ragmondo/BitcoinWifi">github</a> or <a href="http://www.getbitcoin.info/hotspot">here</a></p>
-    </footer>
+  </div>
+
+  <h2>Freely available websites</h2>
+
+  <p>Feel free to visit these websites while your payment is being verified.</p>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">LocalBitcoins</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            Need to get some bitcoins? Here's a list of local vendors complete with contact details
+          </p>
+          <a href="http://localbitcoins.com">Visit localbitcoins.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Blockchain.info</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            Find out the latest statistics about the bitcoin blockchain here.
+          </p>
+          <a href="http://blockchain.info">Visit blockchain.info</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">bitcoin.org</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            What on earth is bitcoin anyhoo ?
+          </p>
+          <a href="http://bitcoin.org">Visit bitcoin.org</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Prices</h2>
+
+  <p>
+    A refund for the remaining time will be sent after logout. The amount of the refund is calculated by interpolating between the pricepoints below.
+  </p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Price</th>
+        <th>Duration</th>
+        <th>bitcoin:link</th>
+        <th>QR code</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for p in paymentoptions %}
+      <tr>
+        <td>{{ p[1] }} BTC</td>
+        <td>{{ p[2] }}</td>
+        <td>
+          <a href="bitcoin:{{ bitcoinaddress }}?amount={{ p[1] }}&label=BitcoinWifiHotspot">
+            Pay with bitcoin client
+          </a>
+        </td>
+        <td>
+          <a href="#">
+            Show QR code
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
 </div>
-
-
-
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        {% for p in paymentoptions %}
-
-            $("[rel=qr_{{ p[0] }}]").popover({
-                placement : 'bottom', //placement of the popover. also can use top, bottom, left or right
-                title : '<div style="text-align:center; color:red; text-decoration:underline; font-size:14px;">{{ p[1] }} - {{ p[2] }} </div>', //this is the top title bar of the popover. add some basic css
-                html: 'true', //needed to show html of course
-                content : '<div id="popOverBox"><img src="/qrcode/{{p[0]}}" width="251" height="201" /></div>' //this is the content of the html box. add the image here or anything you want really.
-            });
-
-            {% endfor %}
-
-        });
-</script>
 
 {% endblock %}
