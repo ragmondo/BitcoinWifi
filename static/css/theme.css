@@ -19,18 +19,10 @@ footer{
 /* Remove margin from qr code */
 .qrcode{
   text-align: center;
-  overflow: hidden;
 }
 .qrcode img{
-  text-align: center;
   display: inline-block;
-  margin: -5% -10%;
-}
-@media (min-width: 768px) {
-  .qrcode img{
-    width: 120%;
-    height: 120%;
-  }
+  max-width: 100%;
 }
 
 /* Status tables */
