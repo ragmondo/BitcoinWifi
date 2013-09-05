@@ -3,7 +3,7 @@
   margin-bottom: 0;
 }
 footer{
-  padding: 20px 0 50px;
+  padding-bottom: 50px;
 }
 
 /* Emphasis on bitcoin address */
@@ -31,4 +31,31 @@ footer{
     width: 120%;
     height: 120%;
   }
+}
+
+/* Status tables */
+.table td{
+  white-space: nowrap;
+}
+.table > tbody > tr.muted td{
+  opacity: .6;
+}
+.table > tbody > tr.primary > td{
+  background: rgb(217, 237, 247)
+}
+.table-hover > tbody > tr.primary:hover > td{
+  background: #C5DDE8
+}
+td.addr{
+  max-width: 70px;
+  width: 70px;
+  overflow: hidden;
+}
+
+/* Config */
+input:required:invalid{
+  border-color: rgb(233, 50, 45);
+  box-shadow: 0px 0px 6px rgb(248, 185, 183);
+  color: rgb(185, 74, 72);
+  border-color: rgb(238, 95, 91);
 }

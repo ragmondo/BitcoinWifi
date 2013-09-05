@@ -1,0 +1,131 @@
+
+<div class="address">Top up: <span class="text-danger">{{ btcaddr }}</span></div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-7 col-md-8 col-lg-9">
+      <h2>How to access Bitcoin Wifi?</h2>
+      <p class="lead">
+        Just send <b>0.001</b> BTC to the <span class="text-danger">address&nbsp;above</span>
+      </p>
+      <p>
+        This amount is for the first hour, check out the <a href="#prices">prices for longer sessions</a>. By sending a payment to this address, you agree with the <a href="/terms">terms&nbsp;and&nbsp;conditions</a> of this hotspot.
+      </p>
+      <p>
+        <div class="progress" style="height:46px">
+          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{z}}" aria-valuemin="0" aria-valuemax="100" style="width: {{z}}%;">
+            <a href ng-click="zCheck()" ng-show="z>=100" class="btn btn-success btn-block btn-lg">Start surfing!</a>
+          </div>
+          <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{100-z}}" aria-valuemin="0" aria-valuemax="100" style="width: {{100-z}}%;">
+            <a href ng-click="zCheck()" ng-hide="z>20" class="btn btn-primary btn-block btn-lg">Check payment & start surfing!</a>
+          </div>
+        </div>
+      </p>
+
+      <p>
+        <b>Bitcoin not installed?</b> Consider these alternative ways:
+      </p>
+      <div class="row">
+        <p class="col-sm-6 col-lg-3">
+          <a href="/a" class="btn btn-success btn-block">Bitcoinwifi voucher</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/b" class="btn btn-success btn-block">Blockchain wallet</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/c" class="btn btn-success btn-block">Coinbase account</a>
+        </p>
+        <p class="col-sm-6 col-lg-3">
+          <a href="/d" class="btn btn-success btn-block">Bitpay account</a>
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-5 col-md-4 col-lg-3 text-center">
+      <div class="qrcode">
+        <img src="/qrcode/a" />
+      </div>
+      <p><b>0.001</b> BTC for <b>one hour</b></p>
+    </div>
+  </div>
+
+  <h2>Freely available websites</h2>
+
+  <p>Feel free to visit these websites while your payment is being verified.</p>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">LocalBitcoins</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            Need to get some bitcoins? Here's a list of local vendors complete with contact details
+          </p>
+          <a href="http://localbitcoins.com">Visit localbitcoins.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Blockchain.info</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            Find out the latest statistics about the bitcoin blockchain here.
+          </p>
+          <a href="http://blockchain.info">Visit blockchain.info</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">bitcoin.org</h2>
+        </div>
+        <div class="panel-body">
+          <p>
+            What on earth is bitcoin anyhoo ?
+          </p>
+          <a href="http://bitcoin.org">Visit bitcoin.org</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Prices</h2>
+
+  <p>
+    A refund for the remaining time will be sent after logout. The amount of the refund is calculated by interpolating between the pricepoints below.
+  </p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Price</th>
+        <th>Duration</th>
+        <th>bitcoin:link</th>
+        <th>QR code</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr ng-repeat="p in prices">
+        <td>{{ p[1] }} BTC</td>
+        <td>{{ p[2] }}</td>
+        <td>
+          <a href="bitcoin:{{ bitcoinaddress }}?amount={{ p[1] }}&label=BitcoinWifiHotspot">
+            Pay with bitcoin client
+          </a>
+        </td>
+        <td>
+          <a href="#">
+            Show QR code
+          </a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
