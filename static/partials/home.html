@@ -112,10 +112,10 @@
     <tbody>
 
       <tr ng-repeat="p in prices">
-        <td>{{ p[1] }} BTC</td>
-        <td>{{ p[2] }}</td>
+        <td>{{ p['price'] }} BTC</td>
+        <td>{{ p['time'] }}</td>
         <td>
-          <a href="bitcoin:{{ bitcoinaddress }}?amount={{ p[1] }}&label=BitcoinWifiHotspot">
+          <a href="bitcoin:{{ btcaddr }}?amount={{ p['price'] }}&label=BitcoinWifiHotspot">
             Pay with bitcoin client
           </a>
         </td>

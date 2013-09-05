@@ -114,9 +114,7 @@ def status():
 
 @app.route('/qrcode/<choice>')
 def qr_code(choice):
-    for p in payment_options:
-        if p[0] == choice:
-            amount = p[1]
+    amount = payment_options[choice]
 
     bitcoin_address = '1JkmD3vBBKpL9SuugetrNvK6FqjM4iMiNT'
     output = StringIO.StringIO()
