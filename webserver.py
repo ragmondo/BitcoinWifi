@@ -23,6 +23,7 @@ import os
 import logging
 import httplib
 import socket
+import bcnet
 
 payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
                     ("b",0.01,"6 hours",datetime.timedelta(0.25)),
@@ -85,17 +86,18 @@ def qr_code(choice):
 def my_gateway():
     r = os.popen("route print").read()
     
-
+def _my_ip(nic):
+    try:
+        nics = bcnet.getnics()
+        return nics[nic][1]
+    except KeyError:
+        return '0.0.0.0'
 
 def my_eth0_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("gmail.com",80))
-    ret = s.getsockname()[0]
-    s.close()
-    return ret
+    return _my_ip('eth0')
 
 def my_wlan0_ip():
-    return "192.168.42.1"
+    return _my_ip('wlan0')
 
 
 def has_balance(pub_key):
@@ -149,17 +151,24 @@ def catch_all(path):
 
 
 def read_arp_table():
+    # The linux ARP command parses the special file /proc/net/arp.
+    # Ignore what man arp says, ioctls do not work!
     ip_list = defaultdict(str)
-    int_f = re.compile("Interface: ")
-    header = re.compile("Internet Address")
-    ip_mac_re = re.compile("(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*(?P<mac>[0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2})")
-    l = os.popen("arp -a")
-    for r in l:
-        g = ip_mac_re.findall(r)
-        if g:
-            for g2 in g:
-                ip_list[g2[0]] = g2[1]
-
+    with open('/proc/net/arp') as f:
+        f.readline() # Skip header
+        for l in f.readlines():
+            d = l.split()
+            ip_list[d[0]] = d[3]
+    # int_f = re.compile("Interface: ")
+    # header = re.compile("Internet Address")
+    # ip_mac_re = re.compile("(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*(?P<mac>[0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2})")
+    # l = os.popen("arp -a")
+    # for r in l:
+    #     g = ip_mac_re.findall(r)
+    #     if g:
+    #         for g2 in g:
+    #             ip_list[g2[0]] = g2[1]
+    #
     return ip_list
 
 if __name__ == "__main__":
