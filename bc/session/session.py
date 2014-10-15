@@ -5,7 +5,7 @@ import os
 import time
 from threading import Timer
 
-log = logging.logger(__name__)
+log = logging.getLogger(__file__)
 
 class TimedSession(object):
 

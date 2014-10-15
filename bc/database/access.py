@@ -18,12 +18,15 @@ class Key(Base):
     mac_address = Column(String)
 
 class Session(Base):
+    __tablename__ = \
+        "session"
     id = Column(Integer, primary_key=True)
     pub_key = Column(String)
     endtime = Column(Integer)
     transaction = Column(String)
 
 class Price(Base):
+    __tablename__ = "price"
     id = Column(Integer, primary_key=True)
     rate = Column(Float)
     length = Column(Integer)
@@ -60,12 +63,12 @@ class SessionDB(object):
 
     def get_session(self, mac):
         rightnow = time.time()
-        q = self.session.query(Session).filter(mac == mac).filter(Key.endtime > rightnow).first()
+        q = self.session.query(Session).filter(mac == mac).filter(Session.endtime > rightnow).first()
         return q
 
     def restore_sessions(self):
         rightnow = time.time()
-        return self.session.query(Session).filter(Key.endtime > rightnow)
+        return self.session.query(Session).filter(Session.endtime > rightnow)
 
     def update_price(self, price):
         # TODO Update price from front end
