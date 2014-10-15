@@ -11,6 +11,9 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from collections import defaultdict
+from bc.session.session import TimedSession
+from bc.database.access import SessionDB
+from bc.bitcoin.transactions import flush_funds, get_balance, get_last_transaction
 
 Base = declarative_base()
 
@@ -31,13 +34,10 @@ payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
 
 bitcoin_format = "bitcoin:%(address)s?amount=%(amount)s&label=BitcoinWifiHotspot"
 
-class Key(Base):
-    __tablename__  = "key"
-    id = Column(Integer,primary_key=True)
-    priv_key = Column(String)
-    pub_key = Column(String)
-    ip_address = Column(String)
-    mac_address = Column(String)
+# List of sessions
+sessions = []
+sessiondb = SessionDB()
+log = logging.getLogger(__file__)
 
 @app.route("/")
 def home():
@@ -46,27 +46,20 @@ def home():
         
     ip_address = request.remote_addr
     arp_address = read_arp_table()[ip_address]
-    q = session.query(Key).filter(Key.ip_address == ip_address).filter(Key.mac_address == arp_address).first()
+    q = sessiondb.get_key(ip_address, arp_address)
     if not q:
         k = addrgen.gen_eckey()
-        print k
+        log.debug(k)
         adds = addrgen.get_addr(k)
-        key = Key(pub_key = adds[0], priv_key=adds[1], ip_address = ip_address, mac_address = arp_address)
+        sessiondb.create_key(pub_key=adds[0], priv_key=adds[1], ip_address=ip_address, mac_address=arp_address)
         bitcoin_address = adds[0]
-        print key
-        session.add(key)
-        session.commit()
-        print key
     if q:
         logging.debug("Found an entry", q)
         bitcoin_address = q.pub_key
 
-    ## lookup ip / arp
-
-    return render_template('home.html',ip=ip_address,arp=arp_address,bitcoinaddress=bitcoin_address, paymentoptions=payment_options)
+    return render_template('home.html', ip=ip_address, arp=arp_address, bitcoinaddress=bitcoin_address, paymentoptions=payment_options)
 
 @app.route("/qrcode/<choice>")
-
 def qr_code(choice):
     for p in payment_options:
         if p[0] == choice:
@@ -74,14 +67,12 @@ def qr_code(choice):
 
     ip_address = request.remote_addr
     arp_address = read_arp_table()[ip_address]
-    q = session.query(Key).filter(Key.ip_address == ip_address).filter(Key.mac_address == arp_address).first()
+    q = sessiondb.get_key(ip_address, arp_address)
     bitcoin_address = q.pub_key
-    t = ""
     output = StringIO.StringIO()
     qr = qrcode.make(bitcoin_format % ({"address":bitcoin_address,"amount":amount }))
-    qr._img.save(output,"GIF")
+    qr._img.save(output, "GIF")
     return Response(output.getvalue(), mimetype='image/gif')
-
 
 def my_gateway():
     r = os.popen("route print").read()
@@ -99,83 +90,49 @@ def my_eth0_ip():
 def my_wlan0_ip():
     return _my_ip('wlan0')
 
-
-def has_balance(pub_key):
-    h1 = httplib.HTTPConnection("blockchain.info")
-    h1.request("GET","/q/getreceivedbyaddress/%s" % (pub_key))
-    r = h1.getresponse()
-    ret = int(r.read())
-
-    # pretend it's working 
-
-    ret = 1
-
-    logging.debug("Amount found is %s" % ret)
-    return ret
-
-def enable_access():
+def enable_access(length, tx):
     ip = request.remote_addr
-    print "ip is " ,ip
     mac = read_arp_table()[ip]
-    print "arp table is ", read_arp_table()
-    q = session.query(Key).filter(Key.ip_address == ip).filter(Key.mac_address == mac).first()
-    logging.info("Enabling for MAC %s" % (mac))
-    print "Mac is ",mac
-    sys_cmd = "iptables -I internet 1 -t mangle -m mac --mac-source %s -j RETURN" % mac
-    print "****", sys_cmd, "****"
-    logging.info(sys_cmd)
-    logging.info(os.popen(sys_cmd).read())
+    sessions.append(TimedSession(mac, length))
+    sessiondb.add_session(mac, length, tx)
 
-
-def flush_funds():
-    return
+def get_payment_length(amount):
+    # TODO turn payment into length
+    length = 0
+    for p in payment_options:
+        length = p[1] * amount % p[3]
+    return length
 
 @app.route("/checkaccess")
 def check_access():
     ip = request.remote_addr
     mac = read_arp_table()[ip]
-    q = session.query(Key).filter(Key.ip_address == ip).filter(Key.mac_address == mac).first()
-    if has_balance(q.pub_key):
-        enable_access()
-        flush_funds()
+    q = sessiondb.get_key(ip, mac)
+    if get_balance(q.pub_key):
+        tx = get_last_transaction(q.pub_key)
+        length = get_payment_length(tx.amount)
+        enable_access(length, tx.id)
+        flush_funds(q.pub_key)
         return render_template("access_enabled.html")
     else:
         return render_template("no_access_yet.html")
 
-
 @app.route('/<path:path>')
 def catch_all(path):
     return redirect("http://" + my_wlan0_ip() )
-    #return redirect(url_for('home', region=None, ip=None))
-
-
 
 def read_arp_table():
     # The linux ARP command parses the special file /proc/net/arp.
     # Ignore what man arp says, ioctls do not work!
     ip_list = defaultdict(str)
     with open('/proc/net/arp') as f:
-        f.readline() # Skip header
+        f.readline()  # Skip header
         for l in f.readlines():
             d = l.split()
             ip_list[d[0]] = d[3]
-    # int_f = re.compile("Interface: ")
-    # header = re.compile("Internet Address")
-    # ip_mac_re = re.compile("(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*(?P<mac>[0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2}[:-][0-9a-f]{2})")
-    # l = os.popen("arp -a")
-    # for r in l:
-    #     g = ip_mac_re.findall(r)
-    #     if g:
-    #         for g2 in g:
-    #             ip_list[g2[0]] = g2[1]
-    #
     return ip_list
 
 if __name__ == "__main__":
-    global session
-    Session = sessionmaker()
-    engine = create_engine('sqlite+pysqlite:///file.db', module=sqlite)
-    Session.configure(bind=engine)
-    Base.metadata.create_all(engine)
-    session = Session()
-    app.run(host='0.0.0.0',port=80,debug=True)
+    # TODO restore sessions
+    sessions = [ x for x in sessiondb.restore_sessions() ]
+    app.run(host='0.0.0.0', port=80, debug=True)
