@@ -1,32 +1,25 @@
 __author__ = 'richard'
 
 from flask import Flask
-app = Flask(__name__)
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import request, redirect, render_template
 from flask import Response
+from flask.ext.sqlalchemy import SQLAlchemy
 
-from sqlalchemy import create_engine
-from sqlite3 import dbapi2 as sqlite
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from collections import defaultdict
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///file.db'
+db = SQLAlchemy(app)
+
+#from sqlalchemy.ext.declarative import declarative_base
 from bc.session.session import TimedSession
-from bc.database.access import SessionDB
+import bc.database.access
 from bc.bitcoin.transactions import flush_funds, get_balance, get_last_transaction
+from bc.network.nics import read_arp_table, my_eth0_ip, my_wlan0_ip
 
-Base = declarative_base()
-
-import re
 import datetime
 import addrgen
 import qrcode
 import StringIO
-import os
 import logging
-import httplib
-import socket
-import bcnet
 
 payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
                     ("b",0.01,"6 hours",datetime.timedelta(0.25)),
@@ -34,10 +27,9 @@ payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
 
 bitcoin_format = "bitcoin:%(address)s?amount=%(amount)s&label=BitcoinWifiHotspot"
 
-# List of sessions
-sessions = []
-sessiondb = SessionDB()
 log = logging.getLogger(__file__)
+sessiondb = None
+sessions = []
 
 @app.route("/")
 def home():
@@ -74,22 +66,6 @@ def qr_code(choice):
     qr._img.save(output, "GIF")
     return Response(output.getvalue(), mimetype='image/gif')
 
-def my_gateway():
-    r = os.popen("route print").read()
-    
-def _my_ip(nic):
-    try:
-        nics = bcnet.getnics()
-        return nics[nic][1]
-    except KeyError:
-        return '0.0.0.0'
-
-def my_eth0_ip():
-    return _my_ip('eth0')
-
-def my_wlan0_ip():
-    return _my_ip('wlan0')
-
 def enable_access(length, tx):
     ip = request.remote_addr
     mac = read_arp_table()[ip]
@@ -121,18 +97,8 @@ def check_access():
 def catch_all(path):
     return redirect("http://" + my_wlan0_ip() )
 
-def read_arp_table():
-    # The linux ARP command parses the special file /proc/net/arp.
-    # Ignore what man arp says, ioctls do not work!
-    ip_list = defaultdict(str)
-    with open('/proc/net/arp') as f:
-        f.readline()  # Skip header
-        for l in f.readlines():
-            d = l.split()
-            ip_list[d[0]] = d[3]
-    return ip_list
-
 if __name__ == "__main__":
     # TODO restore sessions
-    sessions = [ x for x in sessiondb.restore_sessions() ]
-    app.run(host='0.0.0.0', port=80, debug=True)
+    #sessions = [ x for x in sessiondb.restore_sessions() ]
+    sessiondb = bc.database.access.SessionDB()
+    app.run(host='0.0.0.0', port=8080, debug=True)

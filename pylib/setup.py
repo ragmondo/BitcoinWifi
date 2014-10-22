@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('bcnet',
+module1 = Extension('_bcnet',
                     sources = ['bcnetmodule.c'])
 
 setup (name = 'BcNet',

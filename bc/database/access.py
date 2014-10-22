@@ -1,31 +1,32 @@
 __author__ = 'CMS'
 
-from sqlalchemy import create_engine
-from sqlite3 import dbapi2 as sqlite
 from sqlalchemy import Column, Integer, String, DateTime, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import time
+
+from webserver import db
 
 Base = declarative_base()
 
-class Key(Base):
-    __tablename__  = "key"
+def create_db(app):
+    pass
+
+class Key(db.Model):
+    __tablename__ = "key"
     id = Column(Integer, primary_key=True)
     priv_key = Column(String)
     pub_key = Column(String)
     ip_address = Column(String)
     mac_address = Column(String)
 
-class Session(Base):
-    __tablename__ = \
-        "session"
+class Session(db.Model):
+    __tablename__ =  "session"
     id = Column(Integer, primary_key=True)
     pub_key = Column(String)
     endtime = Column(Integer)
     transaction = Column(String)
 
-class Price(Base):
+class Price(db.Model):
     __tablename__ = "price"
     id = Column(Integer, primary_key=True)
     rate = Column(Float)
@@ -42,33 +43,38 @@ class SessionDB(object):
         return cls._instance
 
     def __init__(self):
-        DBSession = sessionmaker()
-        self.engine = create_engine('sqlite+pysqlite:///file.db', module=sqlite)
-        DBSession.configure(bind=self.engine)
-        Base.metadata.create_all(self.engine)
-        self.session = DBSession()
+        self.db = db
+        self.db.create_all()
+
+    # def _initConnection(self):
+    #     DBSession = sessionmaker()
+    #     self.engine = create_engine('sqlite+pysqlite:///file.db', module=sqlite)
+    #     DBSession.configure(bind=self.engine)
+    #     Base.metadata.create_all(self.engine)
+    #     self.session = DBSession()
 
     def create_key(self, pub_key, priv_key, ip_address, mac_address):
+#        self._initConnection()
         k = Key(pub_key=pub_key, priv_key=priv_key, ip_address=ip_address, mac_address=mac_address)
-        self.session.add(k)
-        self.session.commit()
+        self.db.session.add(k)
+        self.db.session.commit()
 
     def get_key(self, ip, mac):
-        return self.session.query(Key).filter(Key.ip_address == ip).filter(Key.mac_address == mac).first()
+        return self.db.session.query(Key).filter(Key.ip_address == ip).filter(Key.mac_address == mac).first()
 
     def add_session(self, mac, length, tx):
         s = Session(mac=mac, endtime=int(time.time()+length), transaction=tx)
-        self.session.add(s)
-        self.session.commit()
+        self.db.session.add(s)
+        self.db.session.commit()
 
     def get_session(self, mac):
         rightnow = time.time()
-        q = self.session.query(Session).filter(mac == mac).filter(Session.endtime > rightnow).first()
+        q = self.db.session.query(Session).filter(mac == mac).filter(Session.endtime > rightnow).first()
         return q
 
     def restore_sessions(self):
         rightnow = time.time()
-        return self.session.query(Session).filter(Session.endtime > rightnow)
+        return self.db.session.query(Session).filter(Session.endtime > rightnow)
 
     def update_price(self, price):
         # TODO Update price from front end
@@ -76,5 +82,5 @@ class SessionDB(object):
 
     def new_price(self, shortname, longname, amount, length):
         r = Price(rate=amount, length=length, shortname=shortname, longname=longname)
-        self.session.add(r)
-        self.session.commit()
+        self.db.session.add(r)
+        self.db.session.commit()
