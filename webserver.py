@@ -45,18 +45,20 @@ def home():
         adds = addrgen.get_addr(k)
         sessiondb.create_key(pub_key=adds[0], priv_key=adds[1], ip_address=ip_address, mac_address=arp_address)
         bitcoin_address = adds[0]
-    if q:
+    else:
         logging.debug("Found an entry", q)
         bitcoin_address = q.pub_key
 
-    return render_template('home.html', ip=ip_address, arp=arp_address, bitcoinaddress=bitcoin_address, paymentoptions=payment_options)
+    return render_template('index.html', ip=ip_address, arp=arp_address, bitcoinaddress=bitcoin_address, paymentoptions=payment_options)
 
 @app.route("/qrcode/<choice>")
 def qr_code(choice):
+    amount = None
     for p in payment_options:
         if p[0] == choice:
             amount = p[1]
-
+    if not amount:
+        amount = payment_options['a'][1]
     ip_address = request.remote_addr
     arp_address = read_arp_table()[ip_address]
     q = sessiondb.get_key(ip_address, arp_address)
