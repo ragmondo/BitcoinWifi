@@ -20,6 +20,7 @@ import addrgen
 import qrcode
 import StringIO
 import logging
+import json
 
 payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
                     ("b",0.01,"6 hours",datetime.timedelta(0.25)),
@@ -31,8 +32,35 @@ log = logging.getLogger(__file__)
 sessiondb = None
 sessions = []
 
+#
+# These first URLS need securing for admin page
+#
+@app.route("/status")
+def status():
+    """
+    Return the status info to Angular
+    :return:
+    """
+    resp = {}
+    resp['arp'] = []
+    for k,v in read_arp_table().iteritems():
+        resp['arp'].append({ "ip": k, "mac": v })
+    return Response(json.dumps(resp), mimetype='text/json')
+
+@app.route("/admin")
+def admin():
+    """
+    Render the admin page
+    :return:
+    """
+    return render_template("admin.html")
+
 @app.route("/")
 def home():
+    """
+    Main page
+    :return:
+    """
     if my_wlan0_ip() not in request.url_root and my_eth0_ip() not in request.url_root:
         return redirect("http://" + my_wlan0_ip())
         
@@ -53,6 +81,11 @@ def home():
 
 @app.route("/qrcode/<choice>")
 def qr_code(choice):
+    """
+    Returns a GIF of the QR code for given payment choice
+    :param choice:
+    :return:
+    """
     amount = None
     for p in payment_options:
         if p[0] == choice:
@@ -101,6 +134,6 @@ def catch_all(path):
 
 if __name__ == "__main__":
     # TODO restore sessions
-    #sessions = [ x for x in sessiondb.restore_sessions() ]
     sessiondb = bc.database.access.SessionDB()
+    sessions = [ x for x in sessiondb.restore_sessions() ]
     app.run(host='0.0.0.0', port=8080, debug=True)

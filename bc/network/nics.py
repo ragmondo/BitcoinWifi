@@ -1,4 +1,5 @@
 __author__ = 'mets'
+import os
 from collections import defaultdict
 try:
     from _bcnet import getnics
