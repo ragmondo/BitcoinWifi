@@ -46,6 +46,14 @@ class SessionDB(object):
         self.db = db
         self.db.create_all()
 
+    def setupdb(self):
+        p1 = Price(rate=0.0001, length=60*60,shortname="Option one", longname="One hours access")
+        p2 = Price(rate=0.01, length=6*60*60,shortname="Option two", longname="6 hours access")
+        p3 = Price(rate=0.1, length=24*60*60,shortname="Option three", longname="One days access")
+        self.db.session.add(p1)
+        self.db.session.add(p2)
+        self.db.session.add(p3)
+        self.db.session.commit()
     # def _initConnection(self):
     #     DBSession = sessionmaker()
     #     self.engine = create_engine('sqlite+pysqlite:///file.db', module=sqlite)
@@ -84,3 +92,6 @@ class SessionDB(object):
         r = Price(rate=amount, length=length, shortname=shortname, longname=longname)
         self.db.session.add(r)
         self.db.session.commit()
+
+    def get_prices(self):
+        return self.db.session.query(Price).all()
