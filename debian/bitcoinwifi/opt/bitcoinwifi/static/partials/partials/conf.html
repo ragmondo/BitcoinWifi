@@ -1,0 +1,112 @@
+<div class="container">
+
+  <h3>System</h3>
+  <form name="formSys">
+    <fieldset>
+      <p>
+        <label for="sysSignal" class="checkbox-inline">
+          <input type="checkbox" id="sysSignal" name="sysSignal" ng-model="sys.signal" >
+          Enable hotspot signal
+        </label>
+        <label for="sysPaywall" class="checkbox-inline">
+          <input type="checkbox" id="sysPaywall" name="sysPaywall" ng-model="sys.paywall" >
+          Enable paywall
+        </label>
+        <label for="sysAllowNew" class="checkbox-inline">
+          <input type="checkbox" id="sysAllowNew" name="sysAllowNew" ng-model="sys.allownew" >
+          Allow new users
+        </label>
+        <span class="help-block" ng-show="helptext">
+          <em>Enable hotspot signal</em> turns on wireless communication.<br>
+          <em>Enable paywall</em> redirects all non-paying users to a bitcoin paywall.<br>
+          <em>Allow new users</em> allows users to let a payment address being generated for them.
+        </span>
+      </p>
+      <p>
+        <label for="sysName" class="control-label">Hotspot name</label>
+        <input type="text" placeholder="Default: Bitcoin Wifi Hotspot" id="sysName" name="sysName" ng-model="sys.name" class="form-control" required>
+        <span class="help-block" ng-show="helptext">
+          <em>Hotspot name</em> is used as SSID for your hotspot.
+        </span>
+      </p>
+      <p>
+        <label for="sysPubkey" class="control-label">Public keychain seed</label>
+        <input type="text" placeholder="Leave blank for donation" id="sysPubkey" name="sysPubkey" ng-model="sys.Pubkey" class="form-control">
+        <span class="help-block" ng-show="helptext">
+          <em>Public keychain seed</em> is used to generate deterministic payment addresses for new users.
+        </span>
+      </p>
+      <label for="sysTimezone" class="control-label">Timezone</label>
+      <div class="row">
+        <div class="col-sm-6">
+          <p>
+            <select ng-model="sys.timezone" id="sysTimezone" name="sysTimezone" ng-include="'static/partials/timezone.html'" class="form-control" required>
+              <option value="UTC">Loading options...</option>
+            </select>
+            <span class="help-block" ng-show="helptext">
+              Verify if the correct time is displayed.
+            </span>
+          </p>
+        </div>
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-default pull-right" id="updateTime" ng-click="status()">Update</button>
+          <p class="form-control-static"><em>System time:</em> {{time}}</p>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <p>
+    <button type="button" class="btn btn-success" ng-click="sync('sys',1,1)" ng-disabled="formSys.$pristine">Save system config</button>
+    <button type="button" class="btn btn-default">Reload system config</button>
+  </p>
+
+  <h3>Ports</h3>
+  <form name="formPorts">
+    <fieldset>
+      <p>
+        <label for="portsFree" class="control-label">Always opened ports</label>
+        <input type="text" placeholder="Always opened ports" ng-model="ports.free" id="portsFree" name="portsFree" class="form-control" required>
+        <span class="help-block" ng-show="helptext">
+          Recommended: <em>4028</em> (used to connect to the blockchain.info api)<br>
+          Supports comma-seperated values and ranges: 21,22,4000-4400,4028
+        </span>
+      </p>
+      <p>
+        <label for="portsPaid" class="control-label">Open ports after payment</label>
+        <input type="text" placeholder="Ports only opened if the visitor paid for access" ng-model="ports.paid" id="portsPaid" name="portsPaid" class="form-control" required>
+        <span class="help-block" ng-show="helptext">
+          Recommended: <em>21,22,80,8080</em><br>
+          Supports comma-seperated values and ranges: 21,22,4000-4400,4028
+        </span>
+      </p>
+    </fieldset>
+  </form>
+  <p>
+    <button type="button" class="btn btn-success" ng-click="sync('ports',1,1)" ng-disabled="formPorts.$pristine">Save ports config</button>
+    <button type="button" class="btn btn-default">Reload ports config</button>
+  </p>
+
+  <h3>Prices</h3>
+  <form name="formPrices">
+    <fieldset>
+      <p>
+        <label for="pricesPlain" class="control-label">Pricepoints</label>
+        <textarea class="form-control" ng-model="pricesPlain" id="pricesPlain" name="pricesPlain" placeholder="0.001:1:1 hour" required></textarea>
+        <span class="help-block" ng-show="helptext">
+          Format: price:hours:time in words
+        </span>
+      </p>
+      <p>
+        <label for="pricesFree" class="control-label">Free minutes</label>
+        <input type="text" placeholder="5" id="pricesFree" name="pricesFree" ng-model="prices.Free" class="form-control">
+        <span class="help-block" ng-show="helptext">
+          Free minutes start counting when the paywall is first presented. It gives users some time to pay with Coinbase for example.
+        </span>
+      </p>
+    </fieldset>
+  </form>
+  <p>
+    <button type="button" class="btn btn-success" ng-click="sync('prices',1,1)" ng-disabled="formPrices.$pristine">Save paywall config</button>
+    <button type="button" class="btn btn-default">Reload paywall config</button>
+  </p>
+</div>

@@ -1,0 +1,61 @@
+addrgen.py /opt/bitcoinwifi
+file.db /opt/bitcoinwifi
+interface.py /opt/bitcoinwifi
+requirements.txt /opt/bitcoinwifi
+webserver.py /opt/bitcoinwifi
+
+bc/__init__.py /opt/bitcoinwifi/bc
+
+bc/bitcoin/__init__.py /opt/bitcoinwifi/bc/bitcoin
+bc/bitcoin/transactions.py /opt/bitcoinwifi/bc/bitcoin
+
+bc/database/__init__.py /opt/bitcoinwifi/bc/database
+bc/database/access.py /opt/bitcoinwifi/bc/database
+
+bc/network/__init__.py /opt/bitcoinwifi/bc/network
+bc/network/dummy.py /opt/bitcoinwifi/bc/network
+bc/network/nics.py /opt/bitcoinwifi/bc/network
+bc/network/whitelist.py /opt/bitcoinwifi/bc/network
+
+bc/session/__init__.py /opt/bitcoinwifi/bc/session
+bc/session/session.py /opt/bitcoinwifi/bc/session
+
+pylib/bcnetmodule.c /opt/bitcoinwifi/pylib
+pylib/build /opt/bitcoinwifi/pylib
+pylib/README.txt /opt/bitcoinwifi/pylib
+pylib/setup.py /opt/bitcoinwifi/pylib
+
+# pylib/build/lib.linux-x86_64-2.7/bcnetmodule.o /opt/bitcoinwifi
+
+static/partials /opt/bitcoinwifi/static/partials
+static/partials/about.html /opt/bitcoinwifi/static/partials
+static/partials/conf.html /opt/bitcoinwifi/static/partials
+static/partials/home.html /opt/bitcoinwifi/static/partials
+static/partials/stat.html /opt/bitcoinwifi/static/partials
+static/partials/timezone.html /opt/bitcoinwifi/static/partials
+
+static/css/theme.css /opt/bitcoinwifi/static/css/
+static/css/alertify.css /opt/bitcoinwifi/static/css/
+static/css/bootstrap.min.css /opt/bitcoinwifi/static/css/
+
+static/ng/home.js /opt/bitcoinwifi/static/ng/
+static/ng/index.js /opt/bitcoinwifi/static/ng/
+static/ng/admin-filters.js /opt/bitcoinwifi/static/ng/
+static/ng/admin-directives.js /opt/bitcoinwifi/static/ng/
+static/ng/admin.js /opt/bitcoinwifi/static/ng/
+static/ng/admin-controllers.js /opt/bitcoinwifi/static/ng/
+
+static/img/glyphicons-halflings-white.png /opt/bitcoinwifi/static/img/
+static/img/glyphicons-halflings.png /opt/bitcoinwifi/static/img/
+static/img/logo.png /opt/bitcoinwifi/static/img/
+
+static/js/bootstrap.min.js /opt/bitcoinwifi/static/js/
+static/js/alertify.min.js /opt/bitcoinwifi/static/js/
+static/js/jquery.min.js /opt/bitcoinwifi/static/js/
+static/js/angular-route.min.js /opt/bitcoinwifi/static/js/
+static/js/angular.min.js /opt/bitcoinwifi/static/js/
+
+templates/index.html /opt/bitcoinwifi/templates
+templates/admin.html /opt/bitcoinwifi/templates
+templates/access_enabled.html /opt/bitcoinwifi/templates
+templates/no_access_yet.html /opt/bitcoinwifi/templates

@@ -1,0 +1,108 @@
+<div class="container">
+
+  <h3>Status</h3>
+
+  <p>
+    It should be possible to merge these two tables into one, but it depends on what data is still missing.
+  </p>
+
+  <h4>Active sessions</h4>
+  <p>
+    These payments are requested and might be paid.
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>MAC</th>
+        <th>Btc</th>
+        <th>Status</th>
+        <th>Time</th>
+        <th>Addr</th>
+        <th width="1%">Access Control</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="s in sessions" ng-class="{danger:s.deny,success:s.allow&&!s.deny,primary:s.trust&&!s.allow&&!s.deny}">
+        <td>{{s.ip}}</td>
+        <td>{{s.mac}}</td>
+        <td>{{s.btc}}</td>
+        <td>
+          <b ng-show="s.deny" class="text-danger">
+            Denied
+          </b>
+          <b ng-show="s.allow&&!s.deny" class="text-success">
+            Allowed
+          </b>
+          <b ng-show="s.trust&&!s.allow&&!s.deny" class="text-primary">
+            Trusted
+          </b>
+          <span ng-show="s.status>0&&s.status<90">
+            Verifying ({{s.status}}%)
+          </span>
+          <span ng-show="s.status>=90" class="text-success">
+            Verified
+          </span>
+          <span ng-hide="s.status" class="text-warning">
+            Waiting
+          </span>
+        </td>
+        <td>{{s.gen|duration}}</td>
+        <td class="addr text-muted">{{s.addr}}</td>
+        <td>
+          <label class="checkbox-inline text-danger">
+            <input type="checkbox" ng-model="s.deny"> Deny
+          </label>
+          <label class="checkbox-inline text-success">
+            <input type="checkbox" ng-model="s.allow"> Allow
+          </label>
+          <label class="checkbox-inline text-primary">
+            <input type="checkbox" ng-model="s.trust"> Trust
+          </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ARP table</h4>
+  <p>
+    In order of priority from high to low:
+  </p>
+  <p>
+    <b>Deny</b> will always deny access.<br />
+    <b>Allow</b> will always allow access from that ip/mac in the specified port range.<br />
+    <b>Trust</b> will always allow all access from that ip/mac on all ports.
+  </p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>MAC</th>
+        <th>Last seen</th>
+        <th>bitcoin</th>
+        <th width="1%">Access Control</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="a in arp|orderBy:'mac'" ng-class="{active:a.ip==ip,'muted':!a.dyn,danger:a.deny,success:a.allow&&!a.deny,primary:a.trust&&!a.allow&&!a.deny}">
+        <td>{{a.ip}}</td>
+        <td>{{a.mac}}</td>
+        <td>yesterday</td>
+        <td>.004</td>
+        <td>
+          <label class="checkbox-inline text-danger">
+            <input type="checkbox" ng-model="a.deny"> Deny
+          </label>
+          <label class="checkbox-inline text-success">
+            <input type="checkbox" ng-model="a.allow"> Allow
+          </label>
+          <label class="checkbox-inline text-primary">
+            <input type="checkbox" ng-model="a.trust"> Trust
+          </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
