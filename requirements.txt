@@ -6,7 +6,9 @@ python 2.7+
 
 python modules
 ==============
+
 flask
+flask-sqlachemy
 PIL
 python-qrcode
 sqlalchemy

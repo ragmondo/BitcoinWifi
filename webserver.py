@@ -21,6 +21,8 @@ import StringIO
 import logging
 import json
 
+from config import shortcuts
+
 # payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
 #                     ("b",0.01,"6 hours",datetime.timedelta(0.25)),
 #                    ("c",0.10, "24 hours", datetime.timedelta(1))]
@@ -77,7 +79,10 @@ def home():
     if not q:
         k = addrgen.gen_eckey()
         log.debug(k)
-        adds = addrgen.get_addr(k)
+        if shortcuts["no_ssl"]:
+            adds = ["abcdefg","1234567"]
+        else:
+            adds = addrgen.get_addr(k)
         sessiondb.create_key(pub_key=adds[0], priv_key=adds[1], ip_address=ip_address, mac_address=arp_address)
         bitcoin_address = adds[0]
     else:
@@ -150,4 +155,6 @@ if __name__ == "__main__":
     sessiondb = bc.database.access.SessionDB()
     sessions = [ x for x in sessiondb.restore_sessions() ]
     #sessiondb.setupdb()
+    print "starting..."
     app.run(host='0.0.0.0', port=8080, debug=True)
+    print "finishing..."
