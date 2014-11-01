@@ -1,0 +1,15 @@
+Source: bitcoinwifi
+Section: unknown
+Priority: optional
+Maintainer: Richard Green <richardagreen@gmail.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/bitcoinwifi.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/bitcoinwifi.git;a=summary
+
+Package: bitcoinwifi
+Architecture: all
+Depends: ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

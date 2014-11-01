@@ -1,0 +1,5 @@
+bitcoinwifi (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Richard Green <richardagreen@gmail.com>  Sat, 01 Nov 2014 23:00:30 +0000

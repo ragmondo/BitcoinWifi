@@ -1,0 +1,53 @@
+/* Structure */
+.navbar{
+  margin-bottom: 0;
+}
+footer{
+  padding-bottom: 50px;
+}
+
+/* Emphasis on bitcoin address */
+.address{
+  font-size: 150%;
+  background: #f5f5f5;
+  text-align: center;
+  margin: 0;
+  padding: 15px 0;
+  margin-bottom: 20px;
+}
+
+/* Remove margin from qr code */
+.qrcode{
+  text-align: center;
+}
+.qrcode img{
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Status tables */
+.table td{
+  white-space: nowrap;
+}
+.table > tbody > tr.muted td{
+  opacity: .6;
+}
+.table > tbody > tr.primary > td{
+  background: rgb(217, 237, 247)
+}
+.table-hover > tbody > tr.primary:hover > td{
+  background: #C5DDE8
+}
+td.addr{
+  max-width: 70px;
+  width: 70px;
+  overflow: hidden;
+}
+
+/* Config */
+input:required:invalid{
+  border-color: rgb(233, 50, 45);
+  box-shadow: 0px 0px 6px rgb(248, 185, 183);
+  color: rgb(185, 74, 72);
+  border-color: rgb(238, 95, 91);
+}

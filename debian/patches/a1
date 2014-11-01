@@ -1,0 +1,67 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ bitcoinwifi (0.1-1) unstable; urgency=low
+ .
+   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+Author: Richard Green <richardagreen@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- bitcoinwifi-0.1.orig/requirements.txt
++++ bitcoinwifi-0.1/requirements.txt
+@@ -6,9 +6,7 @@ python 2.7+
+ 
+ python modules
+ ==============
+-
+ flask
+-flask-sqlachemy
+ PIL
+ python-qrcode
+ sqlalchemy
+--- bitcoinwifi-0.1.orig/webserver.py
++++ bitcoinwifi-0.1/webserver.py
+@@ -21,8 +21,6 @@ import StringIO
+ import logging
+ import json
+ 
+-from config import shortcuts
+-
+ # payment_options = [ ("a",0.0001,"1 hour",datetime.timedelta(1.0/24.0)),
+ #                     ("b",0.01,"6 hours",datetime.timedelta(0.25)),
+ #                    ("c",0.10, "24 hours", datetime.timedelta(1))]
+@@ -79,10 +77,7 @@ def home():
+     if not q:
+         k = addrgen.gen_eckey()
+         log.debug(k)
+-        if shortcuts["no_ssl"]:
+-            adds = ["abcdefg","1234567"]
+-        else:
+-            adds = addrgen.get_addr(k)
++        adds = addrgen.get_addr(k)
+         sessiondb.create_key(pub_key=adds[0], priv_key=adds[1], ip_address=ip_address, mac_address=arp_address)
+         bitcoin_address = adds[0]
+     else:
+@@ -155,6 +150,4 @@ if __name__ == "__main__":
+     sessiondb = bc.database.access.SessionDB()
+     sessions = [ x for x in sessiondb.restore_sessions() ]
+     #sessiondb.setupdb()
+-    print "starting..."
+     app.run(host='0.0.0.0', port=8080, debug=True)
+-    print "finishing..."

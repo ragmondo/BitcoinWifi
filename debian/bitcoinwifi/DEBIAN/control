@@ -1,0 +1,10 @@
+Package: bitcoinwifi
+Version: 0.1-1
+Architecture: all
+Maintainer: Richard Green <richardagreen@gmail.com>
+Installed-Size: 625
+Section: unknown
+Priority: optional
+Homepage: <insert the upstream URL, if relevant>
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
