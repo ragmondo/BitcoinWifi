@@ -136,7 +136,7 @@ def check_access():
         tx = get_last_transaction(q.pub_key)
         length = get_payment_length(tx.amount)
         enable_access(length, tx.id)
-        flush_funds(q.pub_key)
+        # flush_funds(q.pub_key) RG - needs central wallet and private key of temporary deposit location.
         return render_template("access_enabled.html")
     else:
         return render_template("no_access_yet.html")
