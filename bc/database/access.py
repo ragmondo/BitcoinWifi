@@ -11,6 +11,13 @@ Base = declarative_base()
 def create_db(app):
     pass
 
+class Owner(db.Model):
+    __tablename__ = "owner"
+    priv_key = Column(String)
+    pub_key = Column(String)
+    
+    # RG Create function to get at priv, pub keys
+
 class Key(db.Model):
     __tablename__ = "key"
     id = Column(Integer, primary_key=True)
@@ -54,6 +61,9 @@ class SessionDB(object):
         self.db.session.add(p2)
         self.db.session.add(p3)
         self.db.session.commit()
+        
+        # RG if len (Owner) == 0, then create a new entry otherwise leave in there.
+        
     # def _initConnection(self):
     #     DBSession = sessionmaker()
     #     self.engine = create_engine('sqlite+pysqlite:///file.db', module=sqlite)
