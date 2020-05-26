@@ -1,3 +1,9 @@
+Tidying up my repos.
+Time for this to finally be put to bed... or archive.
+
+
+
+
 BitcoinWifi
 ===========
 
